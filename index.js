@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ObjectId, ServerApiVersion } = require("mongodb");
 require("dotenv").config();
 
 const app = express();
@@ -35,15 +35,28 @@ async function run() {
           date: new Date().toLocaleDateString("en-US"),
         };
 
-        console.log("Received product:", product);
+     
 
         const result = await productCollection.insertOne(product);
         res
           .status(201)
           .json({ message: "Product added", productId: result.insertedId });
       } catch (error) {
-        console.error(error);
+    
         res.status(500).json({ message: "Failed to add product" });
+      }
+    });
+
+    app.get("/products/:id", async (req, res) => {
+      const { id } = req.params;
+  
+      try {
+        const product = await productCollection.findOne({
+          _id: new ObjectId(id),
+        });
+        res.send(product);
+      } catch (err) {
+        res.status(500).send({ message: "Product not found" });
       }
     });
 
@@ -53,23 +66,12 @@ async function run() {
       res.send(result);
     });
 
-    console.log("✅ MongoDB Connected Successfully");
+   
   } catch (error) {
-    console.error("❌ MongoDB connection failed:", error);
+    
   }
 }
 // GET product by id
-app.get("/products/:id", async (req, res) => {
-  const { id } = req.params;
-  console.log(id)
-  const ObjectId = require("mongodb").ObjectId;
-  try {
-    const product = await productCollection.findOne({ _id: new ObjectId(id) });
-    res.send(product);
-  } catch (err) {
-    res.status(500).send({ message: "Product not found" });
-  }
-});
 
 run().catch(console.dir);
 
