@@ -60,7 +60,6 @@ async function run() {
       }
     });
 
-    // ✅ GET API – সব প্রোডাক্ট লিস্ট দেখা যাবে
     app.get("/products", async (req, res) => {
       const result = await productCollection.find().toArray();
       res.send(result);
@@ -72,6 +71,7 @@ async function run() {
   }
 }
 // GET product by id
+// gdsgdgh
 
 run().catch(console.dir);
 
